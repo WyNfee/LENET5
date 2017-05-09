@@ -1,4 +1,4 @@
-function [r_convData, init_weight] = function_ConvolutionData(p_input_data, p_filter_size, p_filter_stride)
+function [r_convData, init_weight] = function_ConvolutionDataGeneration(p_input_data, p_filter_size, p_filter_stride)
     %assume that, we all get square data, 
     %and assume the data has format:  1 * element_amount
     t_data_size = sqrt(size(p_input_data, 2));
