@@ -9,7 +9,7 @@ function [r_layer_output, r_layer_weight]  = function_ConvolutionLayerForwardPro
     t_input_data_size = sqrt(size(p_input_data, 2));
 
     %init the stored data
-    t_conv_data_size = function_ComputeConvSize(t_input_data_size, p_filter_size, p_filter_stride);
+    t_conv_data_size = function_Utils_ComputeConvSize(t_input_data_size, p_filter_size, p_filter_stride);
     t_layer_output = zeros(p_filter_amount, t_conv_data_size * t_conv_data_size);
     t_layer_weight = zeros(p_filter_amount, p_filter_size * p_filter_size + 1);
 

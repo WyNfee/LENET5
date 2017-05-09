@@ -3,7 +3,7 @@ function r_layer_output = function_MaxPoolingLayerForwardPropagation(p_input_dat
     
     t_input_data_amount = size(p_input_data, 1);
     t_input_data_size =  sqrt(size(p_input_data, 2));
-    t_pooling_data_size = function_ComputeConvSize(t_input_data_size, p_pooling_size, p_pooling_size);
+    t_pooling_data_size = function_Utils_ComputeConvSize(t_input_data_size, p_pooling_size, p_pooling_size);
     t_layer_output = zeros(t_input_data_amount, t_pooling_data_size * t_pooling_data_size);
      
      

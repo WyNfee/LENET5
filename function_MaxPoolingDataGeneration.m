@@ -7,7 +7,7 @@ function r_pooling_data = function_MaxPoolingDataGeneration(p_input_data, p_pool
     %assume that the size will always match
     %we can also using CompteCovSize to do this check, but this time, the
     %stride is the p_pooling_size
-    t_pooling_data_size = function_ComputeConvSize(t_input_data_size, p_pooling_size, p_pooling_size);
+    t_pooling_data_size = function_Utils_ComputeConvSize(t_input_data_size, p_pooling_size, p_pooling_size);
     %Init the pooling data;
     t_pooling_data = zeros(t_pooling_data_size, t_pooling_data_size);
     

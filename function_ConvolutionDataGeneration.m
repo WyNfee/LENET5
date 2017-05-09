@@ -9,7 +9,7 @@ function [r_convData, init_weight] = function_ConvolutionDataGeneration(p_input_
     t_out_count = 1;
     % the reason of +1 in the weight initialization, is that we need to
     % implment wx+b, we need left one weight for b
-    t_init_weight = function_XavierInitializationForReLu(t_in_weight_count + 1, t_out_count);
+    t_init_weight = function_Utils_XavierInitializationForReLu(t_in_weight_count + 1, t_out_count);
     
    %we assume the stride is valid; won't check it here
    %check method:
@@ -17,7 +17,7 @@ function [r_convData, init_weight] = function_ConvolutionDataGeneration(p_input_
    % (t_data_size - p_filter_size)/p_filter_stride + 1
    %if conv_image_amount_each_edge is not integer
    %then stride is invalid, check function_ComputeConvSize for detail
-    t_conv_image_amount_each_edge = function_ComputeConvSize(t_data_size, p_filter_size, p_filter_stride);
+    t_conv_image_amount_each_edge = function_Utils_ComputeConvSize(t_data_size, p_filter_size, p_filter_stride);
     t_conv_data = zeros(t_conv_image_amount_each_edge,t_conv_image_amount_each_edge);
    %rebuild the data to square matrix
     t_image_data =reshape(p_input_data, [t_data_size,t_data_size]);
