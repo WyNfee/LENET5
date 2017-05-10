@@ -1,6 +1,6 @@
 %This is full connection layer, where connect to all hidden layers of
 %generic neuron network
-function [r_layer_output, r_layer_weight] = function_FullConnectionLayerForwardPropagation(p_input_data, p_hidden_neuron_amount)
+function [r_layer_output, r_layer_weight] = function_LENET_FullConnectionLayerForwardPropagation(p_input_data, p_hidden_neuron_amount)
     %unpack the matrix here
     t_input_data = p_input_data(:);
     

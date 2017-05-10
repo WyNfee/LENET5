@@ -4,7 +4,7 @@
 %is a matrix, with filter_amount * (each cov image matrix)
 %return: r_layer_weight
 %is a matrix, with filter_amount * (each cov weight matrix)
-function [r_layer_output, r_layer_weight]  = function_ConvolutionLayerForwardPropagation(p_input_data, p_filter_size, p_filter_stride, p_filter_amount)
+function [r_layer_output, r_layer_weight]  = function_LENET_ConvolutionLayerForwardPropagation(p_input_data, p_filter_size, p_filter_stride, p_filter_amount)
     %compute the input data size
     t_input_data_size = sqrt(size(p_input_data, 2));
 
@@ -15,7 +15,7 @@ function [r_layer_output, r_layer_weight]  = function_ConvolutionLayerForwardPro
 
     %generate the conv
     for i = 1 : p_filter_amount
-        [t_conv_data, t_conv_weight] = function_ConvolutionDataGeneration(p_input_data, p_filter_size, p_filter_stride);
+        [t_conv_data, t_conv_weight] = function_LENET_ConvolutionDataGeneration(p_input_data, p_filter_size, p_filter_stride);
         t_layer_output(i,:) = t_conv_data;
         t_layer_weight(i,:) = t_conv_weight;
     end

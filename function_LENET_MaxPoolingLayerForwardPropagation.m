@@ -1,5 +1,5 @@
 %This function will generate a layer of pooling data by forward propagation
-function r_layer_output = function_MaxPoolingLayerForwardPropagation(p_input_data, p_pooling_size)
+function r_layer_output = function_LENET_MaxPoolingLayerForwardPropagation(p_input_data, p_pooling_size)
     
     t_input_data_amount = size(p_input_data, 1);
     t_input_data_size =  sqrt(size(p_input_data, 2));
@@ -8,7 +8,7 @@ function r_layer_output = function_MaxPoolingLayerForwardPropagation(p_input_dat
      
      
     for i = 1 : t_input_data_amount
-        t_pooling_data = function_MaxPoolingDataGeneration(p_input_data(i,:), p_pooling_size);
+        t_pooling_data = function_LENET_MaxPoolingDataGeneration(p_input_data(i,:), p_pooling_size);
         t_layer_output(i, :) = t_pooling_data;
     end
     

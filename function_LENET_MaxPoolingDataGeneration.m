@@ -1,5 +1,5 @@
 %Use Max Pooling Mehtod to compute the pooling(downsample) image
-function r_pooling_data = function_MaxPoolingDataGeneration(p_input_data, p_pooling_size)
+function r_pooling_data = function_LENET_MaxPoolingDataGeneration(p_input_data, p_pooling_size)
     %compute the input data size
     t_input_data_size = sqrt(size(p_input_data,2));
 
