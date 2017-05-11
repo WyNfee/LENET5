@@ -57,7 +57,7 @@ function [r_cost, r_gradient] = function_Ref_CostFunctionSigmoidBGD(p_input_weig
     %use chain rule to compute: 
     %E3/w2 = E3/a3 * a3/z3 * z3/w2 = 1 * g' * a2 (compute order is not
     %considered)
-    %t_layer_two_weight_gradient = t_layer_two_input_data' * (t_layer_three_error .* function_Utils_SigmoidGradientFunction(t_layer_three_data))/ t_size_input_data(1);
+    %t_layer_two_weight_gradient =  (t_layer_three_error .* function_Utils_SigmoidGradientFunction(t_layer_two_output_data))' * t_layer_two_input_data / t_size_input_data(1);
     t_layer_two_weight_gradient = t_layer_three_error' * t_layer_two_input_data / t_size_input_data(1);
     %the bias donot need the regularization
     t_layer_two_weight_gradient_regularizedform = ones(size(t_layer_two_weight));
