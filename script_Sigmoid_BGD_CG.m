@@ -1,4 +1,5 @@
 %This Script is targeting on using Sigmoid neuron and BGD to do a digit recognition
+%using Conjuction Gradient Descent Lib fmincg to do BGD
 %It is a full connection neuron network with only 1 hidden layer with 100 hidden neurons and 1 output
 
 %the architecture:
