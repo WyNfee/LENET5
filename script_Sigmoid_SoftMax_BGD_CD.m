@@ -1,6 +1,7 @@
 %This Script is targeting on using Sigmoid neuron and BGD to do a digit recognition
 %using common gradient descent approach
 %It is a full connection neuron network with only 1 hidden layer with 100 hidden neurons and 1 output
+%the final determine function is using softmax
 
 %the architecture:
 %input: 400 neurons
@@ -58,7 +59,7 @@ t_packedweightforDescent  = g_packed_weight;
 %assign the hyperparameter learning rate
 t_learning_rate = 0.01;
 
-iteration_time = 100000;
+iteration_time = 10000;
 t_record_cost_data = zeros(iteration_time, 1);
 
 %a gate whether we do gradient descent
@@ -66,22 +67,28 @@ g_do_gradient_descent = false;
 
 if(g_do_gradient_descent == true)
     %do gradient descent
-    for i = 1: 100000
+    for i = 1: iteration_time
 
-        [t_cost_param, t_gradient_param] = function_Ref_CostFunctionSigmoidBGD(t_packedweightforDescent,g_input_data, g_input_answer, g_layer_one_size, g_layer_two_size, g_reularization_param);
+        [t_cost_param, t_gradient_param] = function_Ref_CostFunctionSigmoid_Softmax_BGD(t_packedweightforDescent,g_input_data, g_input_answer, g_layer_one_size, g_layer_two_size, g_reularization_param);
         t_packedweightforDescent = t_packedweightforDescent - t_learning_rate * t_gradient_param;
         t_record_cost_data(i) = t_cost_param;
         if( rem(i, 100) == 0)
             fprintf('update cost, current cost %.6f,\n',t_cost_param);
         end
     end
-
-    save('data_gradient_descent_sigmoid.mat', 't_packedweightforDescent', 't_record_cost_data');
+    
+    s = input('save the loss data?, y to save:','s');
+    
+    if(s == 'y')
+        save('data_gradient_descent_sigmoid_softmax.mat', 't_packedweightforDescent', 't_record_cost_data');
+    else
+        fprintf('not save data\n');
+    end
     
 else
     
     %plot the gradient descent
-    load('data_gradient_descent_sigmoid.mat');
+    load('data_gradient_descent_sigmoid_softmax.mat');
     
     t_cost_data_size = length(t_record_cost_data);
     t_cost_data_sigmoid = zeros(t_cost_data_size, 2);
@@ -97,7 +104,7 @@ else
     
     s = input('save the loss data?, y to save:','s');
     if(s == 'y')
-        save('data_loss_sigmoid.mat', 't_cost_data_sigmoid');
+        save('data_loss_sigmoid_softmax.mat', 't_cost_data_sigmoid');
     end
 end
 
@@ -131,7 +138,7 @@ while(t_test)
     t_picked_Image_data = [1, t_picked_Image_data];
     t_layer_one_data = function_Utils_SigmoidFunction(t_picked_Image_data * t_layer_one_weight');
     t_layer_one_data = [1, t_layer_one_data];
-    t_prediction = function_Utils_SigmoidFunction(t_layer_one_data * t_layer_two_weight');
+    t_prediction = function_Utils_Softmax_Function(t_layer_one_data * t_layer_two_weight');
     
     [t_probability, t_index]  =max(t_prediction);
     
@@ -153,7 +160,7 @@ t_helper_for_evaluate = ones(g_input_answer_amount, 1);
 t_input_data_for_evaluate = [t_helper_for_evaluate ,g_input_data];
 t_layer_one_data = function_Utils_SigmoidFunction(t_input_data_for_evaluate * t_layer_one_weight');
 t_layer_one_data = [t_helper_for_evaluate,t_layer_one_data];
-t_predictions_matrix = function_Utils_SigmoidFunction(t_layer_one_data * t_layer_two_weight');
+t_predictions_matrix = function_Utils_Softmax_Function(t_layer_one_data * t_layer_two_weight');
 t_predictions_matrix = t_predictions_matrix';
 [t_probability, t_prediction] = max(t_predictions_matrix);
 

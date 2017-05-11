@@ -1,6 +1,7 @@
 %This Script is targeting on using Sigmoid neuron and BGD to do a digit recognition
-%using Conjuction Gradient Descent Lib fmincg to do BGD
+%using common gradient descent approach
 %It is a full connection neuron network with only 1 hidden layer with 100 hidden neurons and 1 output
+%the final determine function is using Sigmoid
 
 %the architecture:
 %input: 400 neurons
@@ -51,21 +52,70 @@ g_layer_two_size = size(g_layer_two_weight);
 
 %a hyper parameter of regularization param
 %roughly set to 0.3, we don't have to dig too much for this reference
-
 %close the regularization
 g_reularization_param = 0;
 
-t_options = optimset('MaxIter', 100);
+t_packedweightforDescent  = g_packed_weight;
+%assign the hyperparameter learning rate
+t_learning_rate = 0.01;
 
-t_costFunction = @(t_param) function_Ref_CostFunctionSigmoidBGD(t_param,g_input_data, g_input_answer, g_layer_one_size, g_layer_two_size, g_reularization_param);
+iteration_time = 10000;
+t_record_cost_data = zeros(iteration_time, 1);
 
-[t_bgd_weight, t_cost] = function_Utils_ConjunctionGradient(t_costFunction, g_packed_weight, t_options);
+%a gate whether we do gradient descent
+g_do_gradient_descent = true;
 
-%unpack the parameters again 
+if(g_do_gradient_descent == true)
+    %do gradient descent
+    for i = 1: iteration_time
+
+        [t_cost_param, t_gradient_param] = function_Ref_CostFunctionSigmoid_Sigmoid_BGD(t_packedweightforDescent,g_input_data, g_input_answer, g_layer_one_size, g_layer_two_size, g_reularization_param);
+        t_packedweightforDescent = t_packedweightforDescent - t_learning_rate * t_gradient_param;
+        t_record_cost_data(i) = t_cost_param;
+        if( rem(i, 100) == 0)
+            fprintf('update cost, current cost %.6f,\n',t_cost_param);
+        end
+    end
+    
+    s = input('save the loss data?, y to save:','s');
+    
+    if(s == 'y')
+        save('data_gradient_descent_sigmoid_sigmoid.mat', 't_packedweightforDescent', 't_record_cost_data');
+    else
+        fprintf('not save data');
+    end
+    
+else
+    
+    %plot the gradient descent
+    load('data_gradient_descent_sigmoid_sigmoid.mat');
+    
+    t_cost_data_size = length(t_record_cost_data);
+    t_cost_data_sigmoid = zeros(t_cost_data_size, 2);
+    
+    for i = 1 : t_cost_data_size
+        
+        t_cost_data_sigmoid(i, 1) = i;
+        t_cost_data_sigmoid(i, 2) = t_record_cost_data(i);
+        
+    end
+    
+    plot(t_cost_data_sigmoid(:,1), t_cost_data_sigmoid(:,2),'--');
+    
+    s = input('save the loss data?, y to save:','s');
+    if(s == 'y')
+        save('data_loss_sigmoid_sigmoid.mat', 't_cost_data_sigmoid');
+    end
+end
+
+
+
+%unpack the parameters again, no matter what happens above, we can still
+%get our descent gradient weight
 t_layer_one_weight_size = g_layer_one_size(1) * g_layer_one_size(2);
-t_layer_one_weight = reshape(t_bgd_weight ( 1 : t_layer_one_weight_size), g_layer_one_size);
+t_layer_one_weight = reshape(t_packedweightforDescent ( 1 : t_layer_one_weight_size), g_layer_one_size);
 t_layer_two_weight_size = t_layer_one_weight_size+1;
-t_layer_two_weight = reshape(t_bgd_weight(t_layer_two_weight_size : end), g_layer_two_size);
+t_layer_two_weight = reshape(t_packedweightforDescent(t_layer_two_weight_size : end), g_layer_two_size);
 
 %now do the prediction and plot
 t_test = true;
@@ -118,14 +168,4 @@ t_right_prediction_count = sum(t_prediction' == y);
 t_accuracy = t_right_prediction_count / g_input_answer_amount;
 
 fprintf('prediction accurracy %1.6f\n',t_accuracy)
-
-
-
-
-
-
-
-
-
-
 

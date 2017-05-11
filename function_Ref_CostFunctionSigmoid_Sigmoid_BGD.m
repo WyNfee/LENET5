@@ -1,6 +1,6 @@
 %the core learning argorithm of Batch Gradient Desent with Conjunction Gradient Descent
 %the neuron activation is using Sigmoid
-function [r_cost, r_gradient] = function_Ref_CostFunctionSigmoidBGD(p_input_weight, p_input_data, p_answer_data, p_layer_one_weight_size, p_layer_two_weight_size, p_regularization_param)
+function [r_cost, r_gradient] = function_Ref_CostFunctionSigmoid_Sigmoid_BGD(p_input_weight, p_input_data, p_answer_data, p_layer_one_weight_size, p_layer_two_weight_size, p_regularization_param)
     %unpack the weight
     t_layer_one_weight_size = p_layer_one_weight_size(1) * p_layer_one_weight_size(2);
     t_layer_one_weight = reshape(p_input_weight(1 :   t_layer_one_weight_size), p_layer_one_weight_size);
