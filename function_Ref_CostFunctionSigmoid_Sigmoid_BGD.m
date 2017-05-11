@@ -34,9 +34,9 @@ function [r_cost, r_gradient] = function_Ref_CostFunctionSigmoid_Sigmoid_BGD(p_i
     
     %compute the regularization form
     %regularization form for layer one:
-    t_layer_one_weight_reg = function_Utils_SigmoidWeightRegularization(t_layer_one_weight, t_size_input_data(1), p_regularization_param);
+    t_layer_one_weight_reg = function_Utils_NNWeightRegularization(t_layer_one_weight, t_size_input_data(1), p_regularization_param);
     %regularization form for layer two:
-    t_layer_two_weight_reg = function_Utils_SigmoidWeightRegularization(t_layer_two_weight, t_size_input_data(1), p_regularization_param);
+    t_layer_two_weight_reg = function_Utils_NNWeightRegularization(t_layer_two_weight, t_size_input_data(1), p_regularization_param);
     
     t_cost_of_network = t_cost_of_network + t_layer_one_weight_reg + t_layer_two_weight_reg;
     

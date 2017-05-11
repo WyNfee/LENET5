@@ -1,6 +1,6 @@
 %the core learning argorithm of Batch Gradient Desent with Conjunction Gradient Descent
 %the neuron activation is using Sigmoid
-function [r_cost, r_gradient] = function_Ref_CostFunctionSigmoid_Softmax_BGD(p_input_weight, p_input_data, p_answer_data, p_layer_one_weight_size, p_layer_two_weight_size, p_regularization_param)
+function [r_cost, r_gradient] = function_Ref_CostFunctionTahn_Softmax_BGD(p_input_weight, p_input_data, p_answer_data, p_layer_one_weight_size, p_layer_two_weight_size, p_regularization_param)
     %unpack the weight
     t_layer_one_weight_size = p_layer_one_weight_size(1) * p_layer_one_weight_size(2);
     t_layer_one_weight = reshape(p_input_weight(1 :   t_layer_one_weight_size), p_layer_one_weight_size);
@@ -20,7 +20,7 @@ function [r_cost, r_gradient] = function_Ref_CostFunctionSigmoid_Softmax_BGD(p_i
     
     %the layer two input
     %add additonal 1 column at the begining
-    t_layer_two_input_data = function_Utils_SigmoidFunction(t_layer_one_output_data);
+    t_layer_two_input_data = function_Utils_TanhFunction(t_layer_one_output_data);
     t_layer_two_input_data  = [t_input_helper, t_layer_two_input_data];
 
     %the layer two output
@@ -57,7 +57,6 @@ function [r_cost, r_gradient] = function_Ref_CostFunctionSigmoid_Softmax_BGD(p_i
     %use chain rule to compute: 
     %E3/w2 = E3/a3 * a3/z3 * z3/w2 = 1 * g' * a2 (compute order is not
     %considered)
-    %t_layer_two_weight_gradient =  (t_layer_three_error .* function_Utils_SigmoidGradientFunction(t_layer_two_output_data))' * t_layer_two_input_data / t_size_input_data(1);
     t_layer_two_weight_gradient = t_layer_three_error' * t_layer_two_input_data / t_size_input_data(1);
     %the bias donot need the regularization
     t_layer_two_weight_gradient_regularizedform = ones(size(t_layer_two_weight));
@@ -73,7 +72,7 @@ function [r_cost, r_gradient] = function_Ref_CostFunctionSigmoid_Softmax_BGD(p_i
     %but the original output haven't added 1 column, so we add it back
     t_layer_one_output_data = [t_input_helper, t_layer_one_output_data];
     %use the changed output data to compute gradient
-    t_layer_one_error = t_layer_two_error .* function_Utils_SigmoidGradientFunction(t_layer_one_output_data);
+    t_layer_one_error = t_layer_two_error .* function_Utils_TanhGradientFunction(t_layer_one_output_data);
     %remove the addtional comlumn
     t_layer_one_error = t_layer_one_error(:,(2:size(t_layer_one_error ,2)));
     %continue to compute E2/W1 = E2/Z1 * Z1/W1
