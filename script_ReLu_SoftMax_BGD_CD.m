@@ -1,11 +1,11 @@
-%This Script is targeting on using Tahn neuron and BGD to do a digit recognition
+%This Script is targeting on using ReLu neuron and BGD to do a digit recognition
 %using common gradient descent approach
 %It is a full connection neuron network with only 1 hidden layer with 100 hidden neurons and 1 output
 %the final determine function is using softmax
 
 %the architecture:
 %input: 400 neurons
-%hidden layer: 100 neurons, full connection, activation: tanh
+%hidden layer: 100 neurons, full connection, activation: ReLu
 %output layer: 10 neuron,  full connection, activation: softmax
 
 %we don't do batch normalization in architecture for this toy sample
@@ -69,7 +69,7 @@ if(g_do_gradient_descent == true)
     %do gradient descent
     for i = 1: iteration_time
 
-        [t_cost_param, t_gradient_param] = function_Ref_CostFunctionTahn_Softmax_BGD(t_packedweightforDescent,g_input_data, g_input_answer, g_layer_one_size, g_layer_two_size, g_reularization_param);
+        [t_cost_param, t_gradient_param] = function_Ref_CostFunctionReLu_Softmax_BGD(t_packedweightforDescent,g_input_data, g_input_answer, g_layer_one_size, g_layer_two_size, g_reularization_param);
         t_packedweightforDescent = t_packedweightforDescent - t_learning_rate * t_gradient_param;
         t_record_cost_data(i) = t_cost_param;
         if( rem(i, 100) == 0)
@@ -80,7 +80,7 @@ if(g_do_gradient_descent == true)
     s = input('save the loss data?, y to save:','s');
     
     if(s == 'y')
-        save('data_gradient_descent_tanh_softmax.mat', 't_packedweightforDescent', 't_record_cost_data');
+        save('data_gradient_descent_relu_softmax.mat', 't_packedweightforDescent', 't_record_cost_data');
     else
         fprintf('not save data\n');
     end
@@ -88,23 +88,23 @@ if(g_do_gradient_descent == true)
 else
     
     %plot the gradient descent
-    load('data_gradient_descent_tanh_softmax.mat');
+    load('data_gradient_descent_relu_softmax.mat');
     
     t_cost_data_size = length(t_record_cost_data);
-    t_cost_data_tanh = zeros(t_cost_data_size, 2);
+    t_cost_data_relu = zeros(t_cost_data_size, 2);
     
     for i = 1 : t_cost_data_size
         
-        t_cost_data_tanh(i, 1) = i;
-        t_cost_data_tanh(i, 2) = t_record_cost_data(i);
+        t_cost_data_relu(i, 1) = i;
+        t_cost_data_relu(i, 2) = t_record_cost_data(i);
         
     end
     
-    plot(t_cost_data_tanh(:,1), t_cost_data_tanh(:,2),'--');
+    plot(t_cost_data_relu(:,1), t_cost_data_relu(:,2),'--');
     
     s = input('save the loss data?, y to save:','s');
     if(s == 'y')
-        save('data_loss_tahn_softmax.mat', 't_cost_data_tanh');
+        save('data_loss_relu_softmax.mat', 't_cost_data_relu');
     end
 end
 
@@ -136,7 +136,7 @@ while(t_test)
     
     %compute the output
     t_picked_Image_data = [1, t_picked_Image_data];
-    t_layer_one_data = function_Utils_TanhFunction(t_picked_Image_data * t_layer_one_weight');
+    t_layer_one_data = function_Utils_ReLuFunction(t_picked_Image_data * t_layer_one_weight');
     t_layer_one_data = [1, t_layer_one_data];
     t_prediction = function_Utils_Softmax_Function(t_layer_one_data * t_layer_two_weight');
     
@@ -158,7 +158,7 @@ end
 
 t_helper_for_evaluate = ones(g_input_answer_amount, 1);
 t_input_data_for_evaluate = [t_helper_for_evaluate ,g_input_data];
-t_layer_one_data = function_Utils_TanhFunction(t_input_data_for_evaluate * t_layer_one_weight');
+t_layer_one_data = function_Utils_ReLuFunction(t_input_data_for_evaluate * t_layer_one_weight');
 t_layer_one_data = [t_helper_for_evaluate,t_layer_one_data];
 t_predictions_matrix = function_Utils_Softmax_Function(t_layer_one_data * t_layer_two_weight');
 t_predictions_matrix = t_predictions_matrix';
