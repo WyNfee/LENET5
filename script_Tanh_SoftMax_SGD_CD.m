@@ -1,12 +1,12 @@
-%This Script is targeting on using Sigmoid neuron and BGD to do a digit recognition
+%This Script is targeting on using Tanh neuron and BGD to do a digit recognition
 %using common gradient descent approach
 %It is a full connection neuron network with only 1 hidden layer with 100 hidden neurons and 1 output
 %the final determine function is using softmax
 
 %the architecture:
 %input: 400 neurons
-%hidden layer: 100 neurons, full connection, activation: sigmoid
-%output layer: 10 neuron,  full connection, activation: sigmoid
+%hidden layer: 100 neurons, full connection, activation: Tanh
+%output layer: 10 neuron,  full connection, activation: Tanh
 
 %we don't do optimizer in architecture for this toy sample
 
@@ -75,7 +75,7 @@ if(g_do_gradient_descent == true)
         t_rand_picked_data = g_input_data(t_rand_picked_data_index(1:end), :);
         t_rand_picked_answer = g_input_answer(t_rand_picked_data_index(1:end), :);
 
-        [t_cost_param, t_gradient_param] = function_Ref_CostFunctionSigmoid_Softmax_BGD(t_packedweightforDescent,t_rand_picked_data, t_rand_picked_answer, g_layer_one_size, g_layer_two_size, g_reularization_param);
+        [t_cost_param, t_gradient_param] = function_Ref_CostFunctionTanh_Softmax_BGD(t_packedweightforDescent,t_rand_picked_data, t_rand_picked_answer, g_layer_one_size, g_layer_two_size, g_reularization_param);
         t_packedweightforDescent = t_packedweightforDescent - t_learning_rate * t_gradient_param;
         t_record_cost_data(i) = t_cost_param;
         if( rem(i, 100) == 0)
@@ -86,7 +86,7 @@ if(g_do_gradient_descent == true)
     s = input('save the loss data?, y to save:','s');
     
     if(s == 'y')
-        save('data_sgd_sigmoid_softmax.mat', 't_packedweightforDescent', 't_record_cost_data');
+        save('data_sgd_tanh_softmax.mat', 't_packedweightforDescent', 't_record_cost_data');
     else
         fprintf('not save data\n');
     end
@@ -94,23 +94,23 @@ if(g_do_gradient_descent == true)
 else
     
     %plot the gradient descent
-    load('data_sgd_sigmoid_softmax.mat');
+    load('data_sgd_tanh_softmax.mat');
     
     t_cost_data_size = length(t_record_cost_data);
-    t_cost_data_sigmoid = zeros(t_cost_data_size, 2);
+    t_cost_data_tanh = zeros(t_cost_data_size, 2);
     
     for i = 1 : t_cost_data_size
         
-        t_cost_data_sigmoid(i, 1) = i;
-        t_cost_data_sigmoid(i, 2) = t_record_cost_data(i);
+        t_cost_data_tanh(i, 1) = i;
+        t_cost_data_tanh(i, 2) = t_record_cost_data(i);
         
     end
     
-    plot(t_cost_data_sigmoid(:,1), t_cost_data_sigmoid(:,2),'--');
+    plot(t_cost_data_tanh(:,1), t_cost_data_tanh(:,2),'--');
     
     s = input('save the loss data?, y to save:','s');
     if(s == 'y')
-        save('data_loss_sigmoid_softmax_sgd.mat', 't_cost_data_sigmoid');
+        save('data_loss_tanh_softmax_sgd.mat', 't_cost_data_tanh');
     end
 end
 
@@ -142,7 +142,7 @@ while(t_test)
     
     %compute the output
     t_picked_Image_data = [1, t_picked_Image_data];
-    t_layer_one_data = function_Utils_SigmoidFunction(t_picked_Image_data * t_layer_one_weight');
+    t_layer_one_data = function_Utils_TanhFunction(t_picked_Image_data * t_layer_one_weight');
     t_layer_one_data = [1, t_layer_one_data];
     t_prediction = function_Utils_Softmax_Function(t_layer_one_data * t_layer_two_weight');
     
@@ -164,7 +164,7 @@ end
 
 t_helper_for_evaluate = ones(g_input_answer_amount, 1);
 t_input_data_for_evaluate = [t_helper_for_evaluate ,g_input_data];
-t_layer_one_data = function_Utils_SigmoidFunction(t_input_data_for_evaluate * t_layer_one_weight');
+t_layer_one_data = function_Utils_TanhFunction(t_input_data_for_evaluate * t_layer_one_weight');
 t_layer_one_data = [t_helper_for_evaluate,t_layer_one_data];
 t_predictions_matrix = function_Utils_Softmax_Function(t_layer_one_data * t_layer_two_weight');
 t_predictions_matrix = t_predictions_matrix';
