@@ -31,7 +31,7 @@ function[r_learnt_weight, r_cost_history, r_network_struct] = function_Learning_
     t_layer_hidden_weight_size = size(t_layer_hidden_weight);
 
     %a hyper parameter of regularization param, close the regularization here
-    t_reularization_param = 0.07;
+    t_reularization_param = 0;
 
     %assign the hyperparameter learning rate
     t_learning_rate = 0.01;
