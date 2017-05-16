@@ -7,50 +7,50 @@
 %p_layer_input_weight_size: the weight size of input
 function [r_cost, r_gradient] = function_Compute_Cost_Gradient...
     (...
-    p_input_weight, p_input_data, p_answer_data, ...
-    p_layer_input_weight_size, p_layer_hidden_weight_size, ...
+    p_w, p_x, p_y, ...
+    p_w2_size, p_w3_size, ...
     p_regularization_param...
     )
     %unpack the weight
-    t_layer_input_weight_size = p_layer_input_weight_size(1) * p_layer_input_weight_size(2);
-    t_layer_input_weight = reshape(p_input_weight(1 :   t_layer_input_weight_size), p_layer_input_weight_size);
-    t_layer_hidden_weight_size = t_layer_input_weight_size+1;
-    t_layer_hidden_weight = reshape(p_input_weight(t_layer_hidden_weight_size : end), p_layer_hidden_weight_size);
+    t_w2_amount = p_w2_size(1) * p_w2_size(2);
+    t_w2 = reshape(p_w(1 :   t_w2_amount), p_w2_size);
+    t_w3_pos = t_w2_amount+1;
+    t_w3 = reshape(p_w(t_w3_pos : end), p_w3_size);
     
     %create a input helper
-    t_size_input_data = size(p_input_data, 1);
-    t_input_helper = ones(t_size_input_data,1);
+    t_m = size(p_x, 1);
+    t_helper = ones(t_m,1);
     
     %prepare the layer one input data
     %add additonal 1 column at the begining 
-    t_layer_one_input_data = [t_input_helper, p_input_data];
+    t_x = [t_helper, p_x];
     
     %the layer one output
-    t_layer_one_output_data = t_layer_one_input_data *  t_layer_input_weight';
+    t_z2 = t_x *  t_w2';
     
     %the layer two input
     %add additonal 1 column at the begining
-    t_layer_two_input_data = function_ReLu(t_layer_one_output_data);
-    t_layer_two_input_data  = [t_input_helper, t_layer_two_input_data];
+    t_a2 = function_ReLu(t_z2);
+    t_a2  = [t_helper, t_a2];
 
     %the layer two output
-    t_layer_two_output_data = t_layer_two_input_data * t_layer_hidden_weight';
+    t_z3 = t_a2 * t_w3';
     
     %the prediction, the layer 3 data
-    t_layer_three_data = function_Softmax(t_layer_two_output_data);
+    t_softmax = function_Softmax(t_z3);
     
     %compute the error without regularization
-    t_cost_of_network = function_Softmax_Cost(t_layer_three_data, p_answer_data);
+    t_cost = function_Softmax_Cost(t_softmax, p_y);
     
     %compute the regularization form
     %regularization form for layer one:
-    t_layer_one_weight_reg = function_NN_Weight_Regularization(t_layer_input_weight, t_size_input_data, p_regularization_param);
+    t_w2_reg = function_NN_Weight_Regularization(t_w2, t_m, p_regularization_param);
     %regularization form for layer two:
-    t_layer_two_weight_reg = function_NN_Weight_Regularization(t_layer_hidden_weight, t_size_input_data, p_regularization_param);
+    t_w3_reg = function_NN_Weight_Regularization(t_w3, t_m, p_regularization_param);
     
-    t_cost_of_network = t_cost_of_network + t_layer_one_weight_reg + t_layer_two_weight_reg;
+    t_cost = t_cost + t_w2_reg + t_w3_reg;
     
-    r_cost = t_cost_of_network;
+    r_cost = t_cost;
     
     %forward propagation complete and get the error
     
@@ -59,21 +59,21 @@ function [r_cost, r_gradient] = function_Compute_Cost_Gradient...
     
     %compute the layer 3 error; the 
     %E3/Z3 = E3/softmax * /softmax*Z3 =y-answer
-    t_layer_three_error = t_layer_three_data - p_answer_data;
+    t_delta_3 = t_softmax - p_y;
 
     %compute the layer 2 error
-   t_layer_two_error = t_layer_three_error * t_layer_hidden_weight;
+   t_delta_2 = t_delta_3 * t_w3;
    
     %compute the gradient of layer two weight
     %use chain rule to compute: 
     %E3/w2 = E3/a3 * a3/z3 * z3/w2 = 1 * g' * a2 (compute order is not
     %considered)
-    t_layer_two_weight_gradient = t_layer_three_error' * t_layer_two_input_data / t_size_input_data;
+    t_w3_grad = t_delta_3' * t_a2 / t_m;
     %the bias donot need the regularization
-    t_layer_two_weight_gradient_regularizedform = ones(size(t_layer_hidden_weight));
-    t_layer_two_weight_gradient_regularizedform(:, 1) = 0;
-    t_layer_two_weight_gradient_regularizedform = t_layer_two_weight_gradient_regularizedform .* t_layer_hidden_weight * p_regularization_param / t_size_input_data;
-    t_layer_two_weight_gradient = t_layer_two_weight_gradient + t_layer_two_weight_gradient_regularizedform;
+    t_w3_grad_reg = ones(size(t_w3));
+    t_w3_grad_reg(:, 1) = 0;
+    t_w3_grad_reg = t_w3_grad_reg .* t_w3 * p_regularization_param / t_m;
+    t_w3_grad = t_w3_grad + t_w3_grad_reg;
     
     %compute teh gradient of layer one weight
     %use chain rule as well to compute, but this time, we have to separete
@@ -81,22 +81,22 @@ function [r_cost, r_gradient] = function_Compute_Cost_Gradient...
     %it shouldnot be put into the gradient
     %transit error to layer one z form E2/Z1 = E2/A2 * A2/Z1
     %but the original output haven't added 1 column, so we add it back
-    t_layer_one_output_data = [t_input_helper, t_layer_one_output_data];
+    t_z2 = [t_helper, t_z2];
     %use the changed output data to compute gradient
-    t_layer_one_error = t_layer_two_error .* function_ReLu_Gradient(t_layer_one_output_data);
+    t_delta_2 = t_delta_2 .* function_ReLu_Gradient(t_z2);
     %remove the addtional comlumn
-    t_layer_one_error = t_layer_one_error(:,(2:size(t_layer_one_error ,2)));
+    t_delta_2 = t_delta_2(:,(2:size(t_delta_2 ,2)));
     %continue to compute E2/W1 = E2/Z1 * Z1/W1
-    t_layer_one_weight_gradient = t_layer_one_error' *t_layer_one_input_data  / t_size_input_data;
+    t_w2_grad = t_delta_2' *t_x  / t_m;
     
     %the bias donot need to regularization
-    t_layer_one_weight_graident_gregularizationform = ones(size(t_layer_input_weight));
-    t_layer_one_weight_graident_gregularizationform(:,1) = 0;
-    t_layer_one_weight_graident_gregularizationform = t_layer_one_weight_graident_gregularizationform .* t_layer_input_weight * p_regularization_param / t_size_input_data;
-    t_layer_one_weight_gradient = t_layer_one_weight_gradient + t_layer_one_weight_graident_gregularizationform;
+    t_w2_grad_reg = ones(size(t_w2));
+    t_w2_grad_reg(:,1) = 0;
+    t_w2_grad_reg = t_w2_grad_reg .* t_w2 * p_regularization_param / t_m;
+    t_w2_grad = t_w2_grad + t_w2_grad_reg;
     
     
     %pack teh gradient again
-    r_gradient = [t_layer_one_weight_gradient(:) ; t_layer_two_weight_gradient(:)];
+    r_gradient = [t_w2_grad(:) ; t_w3_grad(:)];
     
 end
