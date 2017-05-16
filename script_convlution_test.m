@@ -13,6 +13,8 @@ conv_filter = rot90(conv_filter, 2);
 
 conv_data = conv2(picked_data, conv_filter);
 
+conv_data = function_ReLu(conv_data);
+
 subplot(2,1,1);
 imagesc(conv_data);
 axis image off;

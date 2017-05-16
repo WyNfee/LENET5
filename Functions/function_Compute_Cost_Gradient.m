@@ -57,7 +57,8 @@ function [r_cost, r_gradient] = function_Compute_Cost_Gradient...
     
     %start to use back propagation to get the gradient
     
-    %compute the layer 3 error
+    %compute the layer 3 error; the 
+    %E3/Z3 = E3/softmax * /softmax*Z3 =y-answer
     t_layer_three_error = t_layer_three_data - p_answer_data;
 
     %compute the layer 2 error
