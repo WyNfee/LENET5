@@ -84,9 +84,8 @@ function[r_learnt_weight, r_cost_history, r_network_struct] = function_Learning_
     %a cost data storage for further ploting
     t_record_cost_data = zeros(t_iteration_time/t_record_frequency, 1);
 
-    %using momentum optimizer
-    t_momentum_param = 0.9;
-    t_momentum_updater = zeros(size(t_learnt_w));
+    %adam param
+    t_nag_updater = zeros(size(t_learnt_w));
 
     %do gradient descent
     for i = 1: t_iteration_time
@@ -107,9 +106,11 @@ function[r_learnt_weight, r_cost_history, r_network_struct] = function_Learning_
             t_n_conv_filter, t_reg_param...
             );
         
-       %compute two main update parameter for adam
-        t_momentum_updater = t_momentum_param * t_momentum_updater + t_learning_rate * t_gradient_param;
-        t_learnt_w = t_learnt_w - t_momentum_updater;
+        t_nag_updater_previous = t_nag_updater;
+        t_nag_updater = t_nag_param * t_nag_updater - t_learning_rate * t_gradient_param;
+        t_nag_updater_current = -t_nag_param * t_nag_updater_previous + (1 + t_nag_param) * t_nag_updater;
+        t_learnt_w = t_learnt_w + t_nag_updater_current;
+        
         
         %output the cost to console every 100 iterate, so that we know
         %whether it is working, and the progress so far
