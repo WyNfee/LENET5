@@ -85,6 +85,7 @@ function[r_learnt_weight, r_cost_history, r_network_struct] = function_Learning_
     t_record_cost_data = zeros(t_iteration_time/t_record_frequency, 1);
 
     %adam param
+    t_nag_param = 0.90;
     t_nag_updater = zeros(size(t_learnt_w));
 
     %do gradient descent
