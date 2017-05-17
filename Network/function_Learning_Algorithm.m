@@ -9,24 +9,59 @@
 function[r_learnt_weight, r_cost_history, r_network_struct] = function_Learning_Algorithm(p_training_data, p_y)
     %set up architecture parameters
     t_n_input = 400;
+    t_n_conv_filter = 6;
+    t_n_conv_filter_size = 3;
+    %conv square matrix (20) with filter/ kernel square matrix (3) with valid command, 
+    %will generate square matrix 18*18, and we expect the have 6 layer of filters/kernels 
+    %we expect to have 18*18*6 neuron as output of conv operation
+    %the computer tation is below:
+    t_n_conv = (sqrt(t_n_input) - t_n_conv_filter_size + 1).^2 * t_n_conv_filter;  
     t_n_fc_hidden = 100;
     t_n_output = 10;
+    
     
     %reorganize the answer data
     t_n_all_data = size(p_y, 1);
     
+    %the w2 filter
+    t_init_w2_filter = [];
+    %init all conv filters
+    for i = 1 : t_n_conv_filter
+        %conv filter must init with Gaussian Distribution data
+        %so we MUST use function like randn NOT rand
+        t_conv_w_filter = function_XavierInitialization_For_ReLu(t_n_conv_filter_size, t_n_conv_filter_size);
+        t_init_w2_filter = [t_init_w2_filter; t_conv_w_filter(:)];
+    end
+    
+    %the w2 bias
+    t_init_w2_bias = [];
+    %the bias size
+    t_w2_bias_size = sqrt(t_n_input) - t_n_conv_filter_size + 1;
+    for i = 1 : t_n_conv_filter
+        t_conv_w_bias = function_XavierInitialization_For_ReLu(t_w2_bias_size, t_w2_bias_size);
+        t_init_w2_bias = [t_init_w2_bias;t_conv_w_bias(:)];
+    end
+    
+    %after process, init 2 should be a (n * 1) matrix, 
+    %and each (t_n_conv_filter_size * t_n_conv_filter_size) is normal distribution
+    %when pack it out, it should be carefully considered
+    
     %init the weight for layer one
-    t_init_w2 = function_XavierInitialization_For_ReLu(t_n_input + 1, t_n_fc_hidden);
+    t_init_w3 = function_XavierInitialization_For_ReLu(t_n_conv + 1, t_n_fc_hidden);
 
     %init the weight for layer two
-    t_init_w3 = function_XavierInitialization_For_ReLu( t_n_fc_hidden + 1, t_n_output);
+    t_init_w4 = function_XavierInitialization_For_ReLu( t_n_fc_hidden + 1, t_n_output);
 
     %pack the weigth together to compute the weight
-    t_packed_init_w = [t_init_w2(:); t_init_w3(:)]; 
+    t_packed_init_w = [t_init_w2_filter(:); t_init_w2_bias(:)];
+    t_packed_init_w = [t_packed_init_w(:); t_init_w3(:)];
+    t_packed_init_w = [t_packed_init_w(:); t_init_w4(:)]; 
 
     %provide the layer one and layer two size
-    t_w2_size = size(t_init_w2);
+    t_w2_filter_size = size(t_init_w2_filter);
+    t_w2_bias_size = size(t_init_w2_bias);
     t_w3_size = size(t_init_w3);
+    t_w4_size = size(t_init_w4);
 
     %a hyper parameter of regularization param, close the regularization here
     t_reg_param = 0;
@@ -66,9 +101,10 @@ function[r_learnt_weight, r_cost_history, r_network_struct] = function_Learning_
         %find the cost and gradient
         [t_cost_param, t_gradient_param] = function_Compute_Cost_Gradient...
             (...
-            t_learnt_w,t_picked_X, ...
-            t_picked_y, t_w2_size, ...
-            t_w3_size, t_reg_param...
+            t_learnt_w,t_picked_X, t_picked_y, ...
+            t_w2_filter_size, t_w2_bias_size,...
+            t_w3_size, t_w4_size, ...
+            t_n_conv_filter, t_reg_param...
             );
         
        %compute two main update parameter for adam
@@ -93,7 +129,7 @@ function[r_learnt_weight, r_cost_history, r_network_struct] = function_Learning_
         't_layer_input_amount', t_n_input,...
         't_layer_hidden_amount', t_n_fc_hidden,...
         't_layer_output_amount', t_n_output,...
-        't_layer_input_weight_size', t_w2_size,...
-        't_layer_hidden_weight_size', t_w3_size...
+        't_layer_input_weight_size', t_w3_size,...
+        't_layer_hidden_weight_size', t_w4_size...
         );
   
