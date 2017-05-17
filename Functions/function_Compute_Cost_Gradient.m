@@ -31,7 +31,7 @@ function [r_cost, r_gradient] = function_Compute_Cost_Gradient...
     t_m = size(p_x, 1);
     t_helper = ones(t_m,1);
     
-    %the input data dimension = 
+    %the input data dimension
     t_x_d =sqrt(size(p_x, 2));
     
     %FORWARD PROPAGATION STARTS
