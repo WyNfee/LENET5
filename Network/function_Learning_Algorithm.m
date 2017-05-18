@@ -47,7 +47,7 @@ function[r_learnt_weight, r_cost_history, r_network_struct] = function_Learning_
     %when pack it out, it should be carefully considered
     
     %init the weight for layer one
-    t_init_w3 = function_XavierInitialization_For_ReLu(t_n_conv + 1, t_n_fc_hidden);
+    t_init_w3 = function_XavierInitialization_For_ReLu(t_n_conv /4+1, t_n_fc_hidden);
 
     %init the weight for layer two
     t_init_w4 = function_XavierInitialization_For_ReLu( t_n_fc_hidden + 1, t_n_output);
@@ -70,7 +70,7 @@ function[r_learnt_weight, r_cost_history, r_network_struct] = function_Learning_
     t_learning_rate = 0.01;
         
     %learning rate decay param
-    t_learining_rate_decay_frequency = 800;
+    t_learining_rate_decay_frequency = 1200;
     
     %learning rate decay ratio
     t_learning_rate_decay_ratio = 0.8;

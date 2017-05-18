@@ -35,8 +35,9 @@ function [r_cost, r_gradient] = function_Compute_Cost_Gradient...
     
     %CONVOLUTION FORWARD PROPAGATE STARTS    
     t_z2 = function_Convolution(p_x, t_w2_filter, t_w2_bias, p_n_conv_filter);
-    
     t_a2 = function_ReLu(t_z2);
+    
+    t_a2 = function_MaxPooling2x2(t_a2, p_n_conv_filter);
     
     %CONVOLUTION FORWARD PROPAGATION END
     
@@ -48,7 +49,7 @@ function [r_cost, r_gradient] = function_Compute_Cost_Gradient...
     
     %the layer one output
     t_z3 = t_a2 *  t_w3';
-    
+        
     %the layer two input
     %add additonal 1 column at the begining
     t_a3 = function_ReLu(t_z3);
@@ -132,12 +133,14 @@ function [r_cost, r_gradient] = function_Compute_Cost_Gradient...
     %COMPUTE THE CONV FILTER ERROR AND GRADIENT START
     %compute the layer 2 error
     t_delta_2 = t_delta_3 * t_w3;
-    %grab the z2
-    t_z2 = [t_helper, t_z2];
-    %compute the error
-    t_delta_2 = t_delta_2 .* function_ReLu_Gradient(t_z2);
     %remove the bias column
     t_delta_2 = t_delta_2(:,(2:size(t_delta_2,2)));
+    
+    t_delta_2 = function_MaxPooling2x2Back(t_delta_2, p_n_conv_filter);
+    
+    %compute the error
+    t_delta_2 = t_delta_2 .* function_ReLu_Gradient(t_z2);
+
 
     %Use Conv Operation to compute the grad of conv filter
     t_w2_filter_grad = function_Convolution_Gradient(t_delta_2, p_x, p_n_conv_filter);
