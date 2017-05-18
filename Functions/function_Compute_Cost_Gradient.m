@@ -31,20 +31,9 @@ function [r_cost, r_gradient] = function_Compute_Cost_Gradient...
     t_m = size(p_x, 1);
     t_helper = ones(t_m,1);
     
-    %the input data dimension
-    t_x_d =sqrt(size(p_x, 2));
-    
     %FORWARD PROPAGATION STARTS
     
-    %CONVOLUTION FORWARD PROPAGATE STARTS
-    %do the convolution process
-    %loop for each conv filter
-    t_conv_filter_size = t_w2_filter_amount/p_n_conv_filter;
-    t_conv_filter_dimension = sqrt(t_conv_filter_size);
-    
-    t_conv_bias_size = t_w2_bias_amount/p_n_conv_filter;
-    t_conv_bias_dimension = sqrt(t_conv_bias_size);
-    
+    %CONVOLUTION FORWARD PROPAGATE STARTS    
     t_z2 = function_Convolution(p_x, t_w2_filter, t_w2_bias, p_n_conv_filter);
     
     t_a2 = function_ReLu(t_z2);
@@ -151,36 +140,8 @@ function [r_cost, r_gradient] = function_Compute_Cost_Gradient...
     t_delta_2 = t_delta_2(:,(2:size(t_delta_2,2)));
 
     %Use Conv Operation to compute the grad of conv filter
-    t_w2_filter_grad = [];
+    t_w2_filter_grad = function_Convolution_Gradient(t_delta_2, p_x, p_n_conv_filter);
     
-    for i = 1 : p_n_conv_filter
-        
-        %a temporary place to store the gradient for each filter
-        t_conv_filter_grad = zeros(t_conv_filter_dimension, t_conv_filter_dimension);
-        %loop every conv data and compute the gradient of each filter
-        
-        for m = 1 : t_m
-            %find the position of filter we are looking for
-            t_pick_delta_pos = (i - 1) * t_conv_bias_size;
-            
-            %get the kernel error from it
-            t_delta_error = t_delta_2(m ,(t_pick_delta_pos+1 : t_pick_delta_pos+t_conv_bias_size));
-            t_delta_error = reshape(t_delta_error, t_conv_bias_dimension, t_conv_bias_dimension);
-            
-            %find the orignial data 
-            t_data_for_conv = p_x(m,:);
-            t_data_for_conv = reshape(t_data_for_conv, t_x_d, t_x_d);
-            
-            %compute the grad of current convultion
-            t_grad_for_current_conv = conv2(t_data_for_conv, rot90(t_delta_error, 2), 'valid');
-            %add them up
-            t_conv_filter_grad = t_conv_filter_grad + t_grad_for_current_conv;        
-        end
-        t_conv_filter_grad = t_conv_filter_grad./ t_m;
-        %put them into grad container
-        t_w2_filter_grad = [t_w2_filter_grad; t_conv_filter_grad(:)];
-        
-    end
     
     %the bias do not need any grad
     t_w2_bias_grad = zeros(p_w2_bias_size);
