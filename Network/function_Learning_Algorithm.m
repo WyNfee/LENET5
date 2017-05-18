@@ -64,10 +64,16 @@ function[r_learnt_weight, r_cost_history, r_network_struct] = function_Learning_
     t_w4_size = size(t_init_w4);
 
     %a hyper parameter of regularization param, close the regularization here
-    t_reg_param = 0;
+    t_reg_param = 0.1;
 
     %assign the hyperparameter learning rate
     t_learning_rate = 0.01;
+        
+    %learning rate decay param
+    t_learining_rate_decay_frequency = 800;
+    
+    %learning rate decay ratio
+    t_learning_rate_decay_ratio = 0.8;
 
     %assgin the hyperparameter, stochasic data size
     t_stochasitic_data_size = 50;
@@ -85,9 +91,13 @@ function[r_learnt_weight, r_cost_history, r_network_struct] = function_Learning_
     t_record_cost_data = zeros(t_iteration_time/t_record_frequency, 1);
 
     %adam param
-    t_nag_param = 0.90;
-    t_nag_updater = zeros(size(t_learnt_w));
+    t_adam_param_epsilon = 1e-8;
+    t_adam_param_beta1 = 0.9;
+    t_adam_param_beta2 = 0.9999;
 
+    t_adam_weight_movement = zeros(size(t_learnt_w));
+    t_adam_weight_velocity = zeros(size(t_learnt_w));
+    
     %do gradient descent
     for i = 1: t_iteration_time
         
@@ -107,12 +117,25 @@ function[r_learnt_weight, r_cost_history, r_network_struct] = function_Learning_
             t_n_conv_filter, t_reg_param...
             );
         
-        t_nag_updater_previous = t_nag_updater;
-        t_nag_updater = t_nag_param * t_nag_updater - t_learning_rate * t_gradient_param;
-        t_nag_updater_current = -t_nag_param * t_nag_updater_previous + (1 + t_nag_param) * t_nag_updater;
-        t_learnt_w = t_learnt_w + t_nag_updater_current;
+        %compute two main update parameter for adam
+        t_adam_weight_movement = t_adam_param_beta1 .* t_adam_weight_movement + ( 1- t_adam_param_beta1) .* t_gradient_param;
+        t_adam_weight_velocity = t_adam_param_beta2 .* t_adam_weight_velocity + ( 1 - t_adam_param_beta2) .* (t_gradient_param.^2);
         
+        %correct the bias to boost up the parameter, this should not update
+        %the original parameter
+        t_adam_weight_movement_updater = t_adam_weight_movement ./ (1 - t_adam_param_beta1.^i);
+        t_adam_weight_velocity_updater = t_adam_weight_velocity ./ ( 1- t_adam_param_beta2.^i);
         
+        t_adam_updater = t_learning_rate .* t_adam_weight_movement_updater ./ (sqrt(t_adam_weight_velocity_updater) + t_adam_param_epsilon);
+        
+        %simply compute the gradient
+        t_learnt_w = t_learnt_w - t_adam_updater;
+        
+        %decay the learning rate
+        if (rem( i, t_learining_rate_decay_frequency) == 0)
+            t_learning_rate = t_learning_rate * t_learning_rate_decay_ratio;
+        end
+            
         %output the cost to console every 100 iterate, so that we know
         %whether it is working, and the progress so far
         if( rem(i, t_record_frequency) == 0)

@@ -141,8 +141,7 @@ function [r_cost, r_gradient] = function_Compute_Cost_Gradient...
 
     %Use Conv Operation to compute the grad of conv filter
     t_w2_filter_grad = function_Convolution_Gradient(t_delta_2, p_x, p_n_conv_filter);
-    
-    
+ 
     %the bias do not need any grad
     t_w2_bias_grad = zeros(p_w2_bias_size);
     
