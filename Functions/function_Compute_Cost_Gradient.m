@@ -45,38 +45,7 @@ function [r_cost, r_gradient] = function_Compute_Cost_Gradient...
     t_conv_bias_size = t_w2_bias_amount/p_n_conv_filter;
     t_conv_bias_dimension = sqrt(t_conv_bias_size);
     
-    t_z2 = [];
-    
-    for m = 1 : t_m
-        %a container for each conved data
-        t_conved_data = [];
-        for i = 1 : p_n_conv_filter
-            %Compute the filter data
-            %%%%%%%%%%%%%%%%%%%
-            t_cov_filter_pos =  (i-1) * t_conv_filter_size;
-            t_cov_filter = reshape(t_w2_filter(t_cov_filter_pos + 1 : t_cov_filter_pos + t_conv_filter_size), t_conv_filter_dimension, t_conv_filter_dimension);
-
-            t_cov_bias_pos = (i-1) * t_conv_bias_size;
-            t_cov_bias = reshape(t_w2_bias(t_cov_bias_pos + 1 : t_cov_bias_pos + t_conv_bias_size), t_conv_bias_dimension, t_conv_bias_dimension);
-            %%%%%%%%%%%%%%%%%%%%
-            
-            %pick a piece of data to do the convlution process
-            t_data_for_conv = p_x(m,:);
-            t_data_for_conv = reshape(t_data_for_conv, t_x_d, t_x_d);
-            
-            %get teh convolution data
-            t_data_for_conv = conv2(t_data_for_conv, t_cov_filter, 'valid');
-            
-            %add the bias
-            t_data_for_conv = t_data_for_conv + t_cov_bias;
-            
-            t_conved_data = [t_conved_data; t_data_for_conv(:)];
-        end
-        
-        t_conved_data = t_conved_data';
-        t_z2 = [t_z2; t_conved_data];
-        
-    end
+    t_z2 = function_Convolution(p_x, t_w2_filter, t_w2_bias, p_n_conv_filter);
     
     t_a2 = function_ReLu(t_z2);
     
