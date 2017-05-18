@@ -51,8 +51,10 @@ function r_conv_data = function_Convolution(p_x, p_f, p_f_b, p_f_m)
             %computable
             t_c_f = reshape(p_f(t_c_f_p + 1 : t_c_f_p + t_f_s), t_f_d,t_f_d);
             
+            %extract the bias as well (current_filter_bias_position)
             t_c_f_b_p = (i - 1) * t_f_b_s;
             %extract the bias, and reshape to matrix for operation
+            t_c_f_b = reshape(p_f_b( t_c_f_b_p + 1 :  t_c_f_b_p + t_f_b_s), t_f_b_d, t_f_b_d);
             
             %reorg the input data
             t_x = p_x(m,:);
@@ -65,6 +67,7 @@ function r_conv_data = function_Convolution(p_x, p_f, p_f_b, p_f_m)
             t_cov = t_cov + t_c_f_b;
             
             %put it in the storage
+            t_c_data = [t_c_data; t_cov(:)];
             
         end
         
