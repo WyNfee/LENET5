@@ -25,7 +25,7 @@ conv_data  = conv_bias + conv_data;
 
 conv_data =reshape(conv_data, sqrt(size(conv_data,1)),sqrt(size(conv_data,1)));
 
-conv_data = function_ReLu(conv_data);
+%conv_data = function_ReLu(conv_data);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -45,7 +45,7 @@ conv_data2 = conv_data2 + conv_bias;
 
 conv_data2 =reshape(conv_data2, sqrt(size(conv_data2,1)),sqrt(size(conv_data2,1)));
 
-conv_data2 = function_ReLu(conv_data2);
+%conv_data2 = function_ReLu(conv_data2);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -65,26 +65,26 @@ conv_data3 = conv_data3 + conv_bias;
 
 conv_data3 =reshape(conv_data3, sqrt(size(conv_data3,1)),sqrt(size(conv_data3,1)));
 
-conv_data3 = function_ReLu(conv_data3);
+%conv_data3 = function_ReLu(conv_data3);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 subplot(2,2,1);
-%colormap(gray);
+colormap(gray);
 imagesc(image_data);
 axis image off;
 
 subplot(2,2,2)
-%colormap(gray);
+colormap(gray);
 imagesc(conv_data2);
 axis image off;
 
 subplot(2,2,3)
-%colormap(gray);
+colormap(gray);
 imagesc(conv_data3);
 axis image off;
 
 subplot(2,2,4)
-%colormap(gray);
+colormap(gray);
 imagesc(conv_data);
 axis image off;
